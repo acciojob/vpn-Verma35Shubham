@@ -45,7 +45,7 @@ public class ConnectionServiceImpl implements ConnectionService {
                     if(countryName.equalsIgnoreCase(country1.getCountryName().toString()) && min > serviceProvider1.getId()){
                         min = serviceProvider1.getId();
                         serviceProvider = serviceProvider1;
-                        country1 = country;
+                        country = country1;
                     }
                 }
             }
@@ -77,7 +77,7 @@ public class ConnectionServiceImpl implements ConnectionService {
     @Override
     public User disconnect(int userId) throws Exception {
         User user = userRepository2.findById(userId).get();
-        if (!user.getConnected()){
+        if (user.getConnected() == false){
             throw new Exception("Already disconnected");
         }
         user.setMaskedIp(null);
