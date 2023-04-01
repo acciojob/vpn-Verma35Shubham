@@ -1,5 +1,9 @@
 package com.driver.services.impl;
 
+import com.driver.model.Country;
+import com.driver.model.CountryName;
+import com.driver.model.ServiceProvider;
+import com.driver.model.User;
 import com.driver.repository.CountryRepository;
 import com.driver.repository.ServiceProviderRepository;
 import com.driver.repository.UserRepository;
@@ -20,10 +24,60 @@ public class UserServiceImpl implements UserService {
     @Override
     public User register(String username, String password, String countryName) throws Exception{
 
+        if(countryName.equalsIgnoreCase("ind") || countryName.equalsIgnoreCase("usa") || countryName.equalsIgnoreCase("aus")||countryName.equalsIgnoreCase("jpn")||countryName.equalsIgnoreCase("chi")){
+            User user = new User();
+            user.setUsername(username);
+            user.setPassword(password);
+
+            Country country = new Country();
+
+            if(countryName.equalsIgnoreCase("ind")){
+                country.setCountryName(CountryName.IND);
+                country.setCode(CountryName.IND.toCode());
+            }
+            else if(countryName.equalsIgnoreCase("aus")){
+                country.setCountryName(CountryName.AUS);
+                country.setCode(CountryName.AUS.toCode());
+            }
+            else if(countryName.equalsIgnoreCase("usa")){
+                country.setCountryName(CountryName.USA);
+                country.setCode(CountryName.USA.toCode());
+            }
+            else if(countryName.equalsIgnoreCase("jpn")){
+                country.setCountryName(CountryName.JPN);
+                country.setCode(CountryName.JPN.toCode());
+            }
+            else {
+                country.setCountryName(CountryName.CHI);
+                country.setCode(CountryName.CHI.toCode());
+            }
+            country.setUser(user);
+            user.setCountry(country);
+            user.setConnected(false);
+
+            String MIp = country.getCode()+"."+userRepository3.save(user).getId();
+            user.setMaskedIp(MIp);
+
+            userRepository3.save(user);
+
+            return user;
+        }
+        else {
+            throw new Exception("Country not found");
+        }
     }
 
     @Override
     public User subscribe(Integer userId, Integer serviceProviderId) {
+        User user = userRepository3.findById(userId).get();
 
+        ServiceProvider serviceProvider = serviceProviderRepository3.findById(serviceProviderId).get();
+
+        user.getServiceProviderList().add(serviceProvider);
+        serviceProvider.getUsers().add(user);
+
+        serviceProviderRepository3.save(serviceProvider);
+
+        return user;
     }
 }
