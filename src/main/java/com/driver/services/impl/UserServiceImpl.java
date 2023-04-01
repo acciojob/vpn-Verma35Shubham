@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
                 country.setCode(CountryName.CHI.toCode());
             }
             country.setUser(user);
-            user.setCountry(country);
+            user.setOriginalCountry(country);
             user.setConnected(false);
 
             String MIp = country.getCode()+"."+userRepository3.save(user).getId();
